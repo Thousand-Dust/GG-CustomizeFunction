@@ -42,7 +42,7 @@ public class ScriptPro extends TwoArgFunction {
         tab.set("toast",new toast());
         tab.set("sleep",new sleep());
         env.set(tabName, tab);
-        env.set("newThread", new newThread());
+        env.set("thread", new newThread());
         return tab;
     }
 
@@ -57,12 +57,7 @@ public class ScriptPro extends TwoArgFunction {
     //新线程
     class newThread extends VarArgFunction {
         public Varargs invoke(final Varargs args) {
-            new Thread(new Runnable(){
-                    @Override
-                    public void run() {
-                        args.checkfunction(1).call();
-                    }
-                }).start();
+            new Thread(() -> args.checkfunction(1).call()).start();
             return NONE;
         }
     }
