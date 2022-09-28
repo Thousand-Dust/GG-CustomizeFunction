@@ -8,8 +8,9 @@ public class BaseInfo
     }
     
     public static String getAuthor(){
-        return "author: 执念\n" +
-                "code is provided: 小五";
+        return "Github: https://github.com/Thousand-Dust/GG-CustomizeFunction 给个Star谢谢" +
+                "Author: 执念\n" +
+                "Code is provided: 小五";
     }
     
     public static String getUpdateTime()
