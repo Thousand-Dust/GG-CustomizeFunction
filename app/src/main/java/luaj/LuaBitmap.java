@@ -3,7 +3,9 @@ package luaj;
 import android.graphics.Bitmap;
 
 public class LuaBitmap extends LuaValue {
+
     private Bitmap bitmap;
+    public static LuaValue s_metatable;
 
     @Override
     public int type() {
@@ -15,6 +17,10 @@ public class LuaBitmap extends LuaValue {
         return "bitmap";
     }
 
+    @Override
+    public LuaValue getmetatable() {
+        return s_metatable;
+    }
 
     public static LuaBitmap valueOf(Bitmap bitmap){
         return new LuaBitmap(bitmap);

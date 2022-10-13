@@ -1,16 +1,12 @@
 package android.pro;
 
 import android.canvas.BitmapLib;
+import android.canvas.CanvasLib;
+import android.canvas.PaintLib;
 import android.content.Context;
-import android.app.AlertDialog;
-import java.util.Map;
-import android.util.ArrayMap;
-import android.os.Build;
-import android.view.WindowManager;
-import android.content.DialogInterface;
 import android.ext.ThreadManager;
 import android.widget.Toast;
-import android.canvas.DrawLib;
+import android.canvas.ViewLib;
 
 import luaj.Globals;
 import luaj.LoadState;
@@ -37,25 +33,42 @@ public class ScriptPro extends TwoArgFunction {
         tab.set("VERSION", BaseInfo.getVersion());
         tab.set("UPTIME", BaseInfo.getUpdateTime());
         tab.set("AUTHOR", BaseInfo.getAuthor());
-        tab.set("killMTP", new closeMTP());
-        tab.set("execCmd", new execCmd());
-        tab.set("toast",new toast());
-        tab.set("sleep",new sleep());
+//        tab.set("killMTP", new closeMTP());
+//        tab.set("execCmd", new execCmd());
+//        tab.set("toast",new toast());
+//        tab.set("sleep",new sleep());
         env.set(tabName, tab);
+        //获取屏幕分辨率
+        env.set("getWH", new GetWH());
+        //线程函数
         env.set("thread", new newThread());
         return tab;
     }
 
     private void init() {
         this.globals.load(this);
-        this.globals.load(new DrawLib());
+        this.globals.load(new ViewLib());
+        this.globals.load(new CanvasLib());
+        this.globals.load(new PaintLib());
         this.globals.load(new BitmapLib());
         LoadState.install(this.globals);
         LuaC.install(this.globals);
     }
 
+    class GetWH extends VarArgFunction {
+        @Override
+        public Varargs invoke(Varargs args) {
+            LuaTable table = new LuaTable();
+            int[] wh = Tools.getWH(Tools.getContext());
+            table.set("width", wh[0]);
+            table.set("height", wh[1]);
+            return table;
+        }
+    }
+
     //新线程
     class newThread extends VarArgFunction {
+        @Override
         public Varargs invoke(final Varargs args) {
             new Thread(() -> args.checkfunction(1).call()).start();
             return NONE;
@@ -64,13 +77,14 @@ public class ScriptPro extends TwoArgFunction {
 
     //关闭MTP检测
     class closeMTP extends VarArgFunction {
+        @Override
         public Varargs invoke(final Varargs args) {
             try {
                 Context appContext = Tools.getContext().createPackageContext(args.checkjstring(1), Context.CONTEXT_INCLUDE_CODE | Context.CONTEXT_IGNORE_SECURITY);
                 String path = appContext.getFilesDir().getAbsolutePath();
-                String rs = args.checkboolean(2) == false ?"sh ": "su -c ";
-                Runtime.getRuntime().exec(rs + "chmod 0000 " + path + "/tss_tmp/tssmua.zip");
-                Runtime.getRuntime().exec(rs + "chmod 0000 " + path + "/files/tss_tmp/");
+                String rs = args.checkboolean(2) ? "su " : "sh ";
+                Runtime.getRuntime().exec(rs + "chmod 0000 " + path + "/tss_tmp/tssmua.zip\n exit");
+                Runtime.getRuntime().exec(rs + "chmod 0000 " + path + "/files/tss_tmp/\n exit");
             } catch (Exception e) {
                 return LuaValue.valueOf(e.toString());
             }
@@ -81,7 +95,7 @@ public class ScriptPro extends TwoArgFunction {
 
 
     //执行系统命令
-    class execCmd extends VarArgFunction {
+    /*class execCmd extends VarArgFunction {
         boolean isClock = false;
         private String result = "";
         private Map<String,String> PermisDescrip = new ArrayMap<String,String>();
@@ -172,16 +186,16 @@ public class ScriptPro extends TwoArgFunction {
             ThreadManager.runOnUiThread(run);
             while(isClock == false)Thread.yield();
         }
-    }
-    
-    //toast
-    class toast extends VarArgFunction
+    }*/
+
+    /*class toast extends VarArgFunction
     {
         private Toast toast = null;
         
         public void showToast(Context context, String str){
-            if(toast != null)
+            if(toast != null) {
                 toast.cancel();
+            }
             toast = Toast.makeText(context, str, Toast.LENGTH_SHORT);
             toast.show();
         }
@@ -189,17 +203,17 @@ public class ScriptPro extends TwoArgFunction {
         @Override
         public Varargs invoke(final Varargs args) {
             ThreadManager.runOnUiThread(new Runnable(){
+                @Override
                 public void run(){
                     showToast(Tools.getContext(),args.checkjstring(1));
                 }
             });
             return NONE;
         }
-    }
+    }*/
     
-    
-    //sleep
-    class sleep extends VarArgFunction
+
+    /*class sleep extends VarArgFunction
     {
         @Override
         public Varargs invoke(Varargs args) {
@@ -209,5 +223,5 @@ public class ScriptPro extends TwoArgFunction {
             {}
             return NONE;
         } 
-    }
+    }*/
 }

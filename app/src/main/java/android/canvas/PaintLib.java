@@ -1,5 +1,6 @@
 package android.canvas;
 import luaj.LuaPaint;
+import luaj.LuaString;
 import luaj.lib.TwoArgFunction;
 import luaj.LuaValue;
 import luaj.lib.VarArgFunction;
@@ -9,138 +10,125 @@ import android.graphics.Paint;
 import luaj.LuaError;
 import android.graphics.Color;
 
+/**
+ * @author Thousand-Dust
+ */
 public class PaintLib extends TwoArgFunction {
 
     @Override
-    public LuaValue call(LuaValue arg1, LuaValue arg2) {
+    public LuaValue call(LuaValue arg1, LuaValue env) {
+
+        env.set("newPaint", new newPaint());
+
         LuaTable paint = new LuaTable();
-        paint.set("new",new newPaint());
-        //属性
-        LuaTable Style = new LuaTable();
-        Style.set("FILL",1);
-        Style.set("STROKE",2);
-        Style.set("FILL_AND_STROKE",3);
-        
-        paint.set("Style",Style);
-        arg2.set("Paint",paint);
-        return paint;
+        //设置画笔笔触宽
+        paint.set("setWidth", new setWidth());
+        //设置画笔样式
+        paint.set("setStyle", new setStyle());
+        //设置画笔颜色
+        paint.set("setColor", new setColor());
+        //设置画笔画出的字符大小
+        paint.set("setTextSize", new setTextSize());
+        //设置抗锯齿
+        paint.set("setAntiAlias", new setAntiAlias());
+
+        if (!env.get("package").isnil()) {
+            env.get("package").get("loaded").set("paint", paint);
+        }
+        if (LuaPaint.s_metatable == null) {
+            LuaTable mt = LuaValue.tableOf(
+                    new LuaValue[] { INDEX, paint});
+            LuaPaint.s_metatable = mt;
+        }
+
+        return env;
     }
-    
-    class mPaint {
-        private Paint paint;
-        
-        public LuaTable get(){
-            paint = new Paint();
-            LuaTable t = new LuaTable();
-            t.set("getPaint",new getPaint());
-            t.set("setAntialias", new setAntialias());//设置画笔是否开启抗锯齿
-            t.set("setAlpha", new setAlpha());//设置画笔透明度
-            t.set("setColor", new setColor());//设置画笔颜色
-            t.set("setStyle", new setStyle());//设置画笔样式
-            t.set("setTextSize", new setTextSize());//设置画笔绘制文本时的文本大小
-            t.set("setWidth", new setWidth());//设置画笔笔触宽度
-            t.set("setPaint",new setPaint());
-            
-            return t;
-        }
-        
-        class setPaint extends VarArgFunction
-        {
-            @Override
-            public Varargs invoke(Varargs args) {
-                if(args.arg(1).typename().equals("table")){
-                    paint = LuaPaint.checkpaint(args.checktable(1).get("getPaint"));
-                }
-                else if(args.arg(1).typename().equals("paint"))
-                {
-                    paint = LuaPaint.checkpaint(args.arg(1));
-                }else
-                {
-                    throw new LuaError("参数类型错误，应该是paint");
-                }
-                return NONE;
-            }
-        }
-        
-        class getPaint extends VarArgFunction
-        {
-            @Override
-            public Varargs invoke(Varargs args) {
-                return LuaPaint.valueOf(paint);
-            }
-        }
-        
-        class setAntialias extends VarArgFunction {
 
-            public Varargs invoke(Varargs varargs) {
-                paint.setAntiAlias(varargs.checkboolean(1));
-                return NONE;
-            }
-        }
-
-        class setAlpha extends VarArgFunction {
-
-            public Varargs invoke(Varargs varargs) {
-                paint.setAlpha(varargs.checkint(1));
-                return NONE;
-            }
-        }
-
-        class setColor extends VarArgFunction {
-
-            public Varargs invoke(Varargs varargs) {
-                paint.setColor(Color.parseColor(varargs.checkjstring(1)));
-                return NONE;
-            }
-        }
-
-        class setStyle extends VarArgFunction {
-
-            public Varargs invoke(Varargs varargs) {
-                int style = varargs.checkint(1);
-
-                switch (style) {
-                    case 1:
-                        //填充
-                        paint.setStyle(Paint.Style.FILL);
-                        break;
-                    case 2:
-                        //描边
-                        paint.setStyle(Paint.Style.STROKE);
-                        break;
-                    case 3:
-                        //填充并描边
-                        paint.setStyle(Paint.Style.FILL_AND_STROKE);
-                        break;
-                    default:
-                        throw new LuaError("没有该样式：请选择1,2,3\n1：填充 2：描边 3：填充并描边");
-                }
-                return NONE;
-            }
-        }
-
-        class setTextSize extends VarArgFunction {
-
-            public Varargs invoke(Varargs varargs) {
-                paint.setTextSize(varargs.tofloat(1));
-                return NONE;
-            }
-        }
-
-        class setWidth extends VarArgFunction {
-
-            public Varargs invoke(Varargs varargs) {
-                paint.setStrokeWidth(varargs.tofloat(1));
-                return NONE;
-            }
-        }
-    }
-    
     class newPaint extends VarArgFunction {
         @Override
         public Varargs invoke(Varargs args) {
-            return new mPaint().get();
+            return LuaPaint.valueOf(new Paint());
         }
-        
+    }
+
+    class setWidth extends VarArgFunction {
+        @Override
+        public Varargs invoke(Varargs args) {
+            LuaPaint.checkpaint(args.arg(1)).setStrokeWidth(args.checkint(2));
+            return NONE;
+        }
+    }
+
+    class setStyle extends VarArgFunction {
+        @Override
+        public Varargs invoke(Varargs args) {
+            LuaValue value = args.checkvalue(2);
+
+            Paint.Style style;
+            if (value instanceof LuaString) {
+                String styleStr = value.checkjstring();
+                switch (styleStr) {
+                    case "描边":
+                        style = Paint.Style.STROKE;
+                        break;
+                    case "填充":
+                        style = Paint.Style.FILL;
+                        break;
+                    case "描边并填充":
+                        style = Paint.Style.FILL_AND_STROKE;
+                        break;
+
+                    default:
+                        throw new LuaError("未知的画笔类型");
+                }
+            } else {
+                int styleNum = value.checkint();
+                switch (styleNum) {
+                    case 0:
+                        //描边
+                        style = Paint.Style.STROKE;
+                        break;
+                    case 1:
+                        //填充
+                        style = Paint.Style.FILL;
+                        break;
+                    case 2:
+                        //描边并填充
+                        style = Paint.Style.FILL_AND_STROKE;
+                        break;
+
+                    default:
+                        throw new LuaError("未知的画笔类型");
+                }
+            }
+
+            LuaPaint.checkpaint(args.arg(1)).setStyle(style);
+
+            return NONE;
+        }
+    }
+
+    class setColor extends VarArgFunction {
+        @Override
+        public Varargs invoke(Varargs args) {
+            LuaPaint.checkpaint(args.arg(1)).setColor(Color.parseColor(args.checkjstring(2)));
+            return NONE;
+        }
+    }
+
+    class setTextSize extends VarArgFunction {
+        @Override
+        public Varargs invoke(Varargs args) {
+            LuaPaint.checkpaint(args.arg(1)).setTextSize(args.tofloat(2));
+            return NONE;
+        }
+    }
+
+    class setAntiAlias extends VarArgFunction {
+        @Override
+        public Varargs invoke(Varargs args) {
+            LuaPaint.checkpaint(args.arg(1)).setAntiAlias(args.checkboolean(2));
+            return NONE;
+        }
     }
 }

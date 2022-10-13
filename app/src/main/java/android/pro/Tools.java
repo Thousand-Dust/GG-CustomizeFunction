@@ -1,6 +1,7 @@
 package android.pro;
 
 import android.content.Context;
+import android.util.DisplayMetrics;
 import android.widget.Toast;
 import java.io.File;
 import java.io.BufferedReader;
@@ -37,7 +38,6 @@ public class Tools
     
     /**
      * 执行系统命令, 返回执行结果
-     *
      * @param cmd 需要执行的命令
      * @param dir 执行命令的子进程的工作目录, null 表示和当前主进程工作目录相同
      */
@@ -125,5 +125,10 @@ public class Tools
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         drawable.draw(canvas);
         return bitmap;
+    }
+
+    public static int[] getWH(Context context) {
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        return new int[]{dm.widthPixels, dm.heightPixels};
     }
 }
