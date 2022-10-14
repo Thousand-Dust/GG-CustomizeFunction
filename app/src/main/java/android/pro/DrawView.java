@@ -1,11 +1,16 @@
 package android.pro;
 
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
+import luaj.Globals;
 import luaj.LuaCanvas;
 import luaj.LuaError;
 import luaj.LuaFunction;
 import luaj.LuaValue;
+
+import android.graphics.Paint;
 import android.view.View;
 
 /**
@@ -13,27 +18,46 @@ import android.view.View;
  */
 public class DrawView extends View {
 
+    private Globals globals;
     private final Refresh refresh = new Refresh();
-    private LuaFunction func = null;
-    
-    public DrawView(){
-        super(android.pro.Tools.getContext());
+
+    private Paint paint;
+    private Bitmap bitmap;
+    //缓冲图
+    private Bitmap bufBitmap;
+    //缓冲画布
+    public Canvas canvas;
+    private LuaFunction drawFun;
+    private boolean isRemove = false;
+
+    public DrawView(Context context, Globals globals) {
+        super(context);
+        this.globals = globals;
+        paint = new Paint();
+        int[] wh = Tools.getWH(context);
+        bitmap = Bitmap.createBitmap(wh[0], wh[1], Bitmap.Config.ARGB_8888);
+        //防canvas的绘制内容画到缓冲图上
+        bufBitmap = Bitmap.createBitmap(bitmap);
+        canvas = new Canvas(bufBitmap);
+    }
+
+    public void setDrawFun(LuaFunction drawFun) {
+        this.drawFun = drawFun;
     }
 
     @Override
-    public void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        if(func!=null) {
-            try {
-                func.call(LuaCanvas.valueOf(canvas));
-            } catch (LuaError e) {
-            }
-        }
+    protected void onDraw(Canvas canvas) {
+        canvas.drawBitmap(bufBitmap, 0,0, paint);
     }
 
-    public void setDraw(LuaFunction func)
-    {
-        this.func = func;
+    @Override
+    public void postInvalidate() {
+        bufBitmap = Bitmap.createBitmap(bitmap);
+        canvas.setBitmap(bufBitmap);
+        if (drawFun != null) {
+            drawFun.call(LuaCanvas.valueOf(canvas));
+        }
+        super.postInvalidate();
     }
 
     public void start(int fps) {
@@ -45,7 +69,6 @@ public class DrawView extends View {
 
     public void close() {
         refresh.isStart = false;
-
     }
 
     class Refresh implements Runnable {
@@ -67,8 +90,9 @@ public class DrawView extends View {
                         Thread.sleep(interval - timeConsuming);
                     }
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace(globals.STDOUT);
+//                e.printStackTrace(globals.STDERR);
             } finally {
                 if (isStart) {
                     isStart = false;

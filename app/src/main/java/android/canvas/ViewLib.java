@@ -11,6 +11,7 @@ import android.view.Gravity;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
+import luaj.Globals;
 import luaj.LuaString;
 import luaj.LuaView;
 import luaj.lib.TwoArgFunction;
@@ -27,6 +28,7 @@ public class ViewLib extends TwoArgFunction {
     private WindowManager wm;
     private WindowManager.LayoutParams lp;
     private Handler handler = new Handler(Looper.getMainLooper());
+    private Globals globals;
 
     public ViewLib() {
         wm = (WindowManager) Tools.getContext().getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
@@ -44,6 +46,7 @@ public class ViewLib extends TwoArgFunction {
 
     @Override
     public LuaValue call(LuaValue arg1, LuaValue env) {
+        globals = env.checkglobals();
         env.set("newView", new newView());
 
         LuaTable view = new LuaTable();
@@ -69,7 +72,7 @@ public class ViewLib extends TwoArgFunction {
     class newView extends VarArgFunction {
         @Override
         public Varargs invoke(Varargs args) {
-            DrawView drawView = new DrawView();
+            DrawView drawView = new DrawView(Tools.getContext(), globals);
             handler.post(() -> wm.addView(drawView, lp));
             return LuaView.valueOf(drawView);
         }
@@ -87,7 +90,7 @@ public class ViewLib extends TwoArgFunction {
         @Override
         public Varargs invoke(Varargs varargs) {
             DrawView luaView = LuaView.checkview(varargs.arg(1));
-            luaView.setDraw(varargs.checkfunction(2));
+            luaView.setDrawFun(varargs.checkfunction(2));
             luaView.start(varargs.optint(3, 60));
             return LuaValue.NONE;
         }
