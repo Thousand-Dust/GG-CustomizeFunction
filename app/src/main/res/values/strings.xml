@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">GG-CustomizeFunction</string>
+    <string name="accessibility_description">用于创建可穿透事件悬浮窗，android版本12及以上才需要开启</string>
 </resources>

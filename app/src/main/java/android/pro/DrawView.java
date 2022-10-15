@@ -92,7 +92,7 @@ public class DrawView extends View {
                 }
             } catch (Exception e) {
                 e.printStackTrace(globals.STDOUT);
-//                e.printStackTrace(globals.STDERR);
+                android.ext.Tools.showToast("error: "+e.getMessage());
             } finally {
                 if (isStart) {
                     isStart = false;
