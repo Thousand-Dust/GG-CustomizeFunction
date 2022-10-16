@@ -41,7 +41,7 @@ public class ScriptLib extends TwoArgFunction {
         env.set("getWH", new GetWH());
         //线程函数
         env.set("thread", new newThread());
-        return tab;
+        return env;
     }
 
     private void init() {

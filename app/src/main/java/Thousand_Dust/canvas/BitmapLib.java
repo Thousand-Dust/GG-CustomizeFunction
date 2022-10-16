@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 
 import Thousand_Dust.luaj.LuaBitmap;
+import luaj.LuaNumber;
 import luaj.LuaTable;
 import luaj.LuaValue;
 import luaj.Varargs;
@@ -22,7 +23,7 @@ public class BitmapLib extends TwoArgFunction {
         LuaTable table = new LuaTable();
         table.set("setWidth", new setWidth());
         table.set("setHeight", new setHeight());
-        table.set("setWH", new setWH());
+        table.set("getWH", new getWH());
         table.set("remove", new remove());
 
         if (LuaBitmap.s_metatable == null) {
@@ -65,15 +66,13 @@ public class BitmapLib extends TwoArgFunction {
         }
     }
 
-    class setWH extends VarArgFunction {
+    class getWH extends VarArgFunction {
         @Override
         public Varargs invoke(Varargs args) {
             Bitmap bitmap = LuaBitmap.checkbitmap(args.arg(1));
             int width = bitmap.getWidth();
             int height = bitmap.getHeight();
-            Matrix matrix = new Matrix();
-            matrix.postScale(width/args.tofloat(2), height/args.tofloat(3));
-            return LuaBitmap.valueOf(Bitmap.createBitmap(bitmap, 0,0, width, height, matrix, true));
+            return LuaValue.tableOf(new LuaValue[]{ LuaValue.valueOf(width), LuaValue.valueOf(height) });
         }
     }
 
