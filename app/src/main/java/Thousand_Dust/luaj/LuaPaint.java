@@ -1,6 +1,7 @@
-package luaj;
+package Thousand_Dust.luaj;
 import android.graphics.Paint;
-import android.view.View;
+
+import luaj.LuaValue;
 
 public class LuaPaint extends LuaValue {
 

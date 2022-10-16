@@ -1,12 +1,11 @@
-package android.pro;
+package Thousand_Dust;
 
-import android.canvas.BitmapLib;
-import android.canvas.CanvasLib;
-import android.canvas.PaintLib;
+import Thousand_Dust.canvas.BitmapLib;
+import Thousand_Dust.canvas.CanvasLib;
+import Thousand_Dust.canvas.PaintLib;
 import android.content.Context;
-import android.ext.ThreadManager;
-import android.widget.Toast;
-import android.canvas.ViewLib;
+
+import Thousand_Dust.canvas.ViewLib;
 
 import luaj.Globals;
 import luaj.LoadState;
@@ -17,12 +16,12 @@ import luaj.compiler.LuaC;
 import luaj.lib.TwoArgFunction;
 import luaj.lib.VarArgFunction;
 
-public class ScriptPro extends TwoArgFunction {
+public class ScriptLib extends TwoArgFunction {
 
     private Globals globals;
     private final String tabName = "pro";
 
-    public ScriptPro(Globals globals) {
+    public ScriptLib(Globals globals) {
         this.globals = globals;
         init();
     }
@@ -30,9 +29,9 @@ public class ScriptPro extends TwoArgFunction {
     @Override
     public LuaValue call(LuaValue arg1, LuaValue env) {
         LuaTable tab = new LuaTable();
-        tab.set("VERSION", BaseInfo.getVersion());
-        tab.set("UPTIME", BaseInfo.getUpdateTime());
-        tab.set("AUTHOR", BaseInfo.getAuthor());
+        tab.set("VERSION", DevInfo.getVersion());
+        tab.set("UPTIME", DevInfo.getUpdateTime());
+        tab.set("AUTHOR", DevInfo.getAuthor());
 //        tab.set("killMTP", new closeMTP());
 //        tab.set("execCmd", new execCmd());
 //        tab.set("toast",new toast());

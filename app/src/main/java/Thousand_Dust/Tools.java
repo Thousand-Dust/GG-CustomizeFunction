@@ -1,4 +1,4 @@
-package android.pro;
+package Thousand_Dust;
 
 import android.content.Context;
 import android.util.DisplayMetrics;

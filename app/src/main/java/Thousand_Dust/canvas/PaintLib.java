@@ -1,5 +1,5 @@
-package android.canvas;
-import luaj.LuaPaint;
+package Thousand_Dust.canvas;
+import Thousand_Dust.luaj.LuaPaint;
 import luaj.LuaString;
 import luaj.lib.TwoArgFunction;
 import luaj.LuaValue;

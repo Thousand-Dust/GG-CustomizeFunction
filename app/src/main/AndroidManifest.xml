@@ -24,7 +24,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name="android.pro.MyAccessibilityService"
+        <service android:name="Thousand_Dust.MyAccessibilityService"
             android:exported="true"
             android:label="可穿透悬浮窗"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">

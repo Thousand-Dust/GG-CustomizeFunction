@@ -1,9 +1,9 @@
-package android.canvas;
+package Thousand_Dust.canvas;
 
-import luaj.LuaBitmap;
-import luaj.LuaCanvas;
+import Thousand_Dust.luaj.LuaBitmap;
+import Thousand_Dust.luaj.LuaCanvas;
 import luaj.LuaFunction;
-import luaj.LuaPaint;
+import Thousand_Dust.luaj.LuaPaint;
 import luaj.lib.TwoArgFunction;
 import luaj.LuaValue;
 import luaj.LuaTable;

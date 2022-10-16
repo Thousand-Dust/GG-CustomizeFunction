@@ -1,4 +1,4 @@
-package android.socket;
+package Thousand_Dust.socket;
 
 import luaj.LuaError;
 import luaj.LuaString;

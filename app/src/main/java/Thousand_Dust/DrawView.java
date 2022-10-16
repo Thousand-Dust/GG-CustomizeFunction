@@ -1,14 +1,12 @@
-package android.pro;
+package Thousand_Dust;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
 import luaj.Globals;
-import luaj.LuaCanvas;
-import luaj.LuaError;
+import Thousand_Dust.luaj.LuaCanvas;
 import luaj.LuaFunction;
-import luaj.LuaValue;
 
 import android.graphics.Paint;
 import android.view.View;

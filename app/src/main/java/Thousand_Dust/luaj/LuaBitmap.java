@@ -1,6 +1,8 @@
-package luaj;
+package Thousand_Dust.luaj;
 
 import android.graphics.Bitmap;
+
+import luaj.LuaValue;
 
 public class LuaBitmap extends LuaValue {
 
