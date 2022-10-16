@@ -1,5 +1,6 @@
 # GG-CustomizeFunction
 对GameGuardian进行自定义的函数,目前只添加绘制函数（在悬浮窗对View进行自定义绘制）和多线程函数
+## 制作不易给个☆star吧，谢谢啦！！！
 
 # gg版本
 此项目基于96版gg的jar进行编写，需要101版移步：
@@ -12,7 +13,7 @@ https://github.com/Thousand-Dust/GG-CustomizeFunction-101
 
 # 成品安装包
 https://wwt.lanzoul.com/b02vn048j
-密码:7d5a
+密码:draw
 
 # 测试脚本
 
