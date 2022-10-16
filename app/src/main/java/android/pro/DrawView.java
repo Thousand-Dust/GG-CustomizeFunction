@@ -55,7 +55,9 @@ public class DrawView extends View {
         bufBitmap = Bitmap.createBitmap(bitmap);
         canvas.setBitmap(bufBitmap);
         if (drawFun != null) {
+            canvas.save();
             drawFun.call(LuaCanvas.valueOf(canvas));
+            canvas.restore();
         }
         super.postInvalidate();
     }

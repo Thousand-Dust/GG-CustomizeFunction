@@ -9,8 +9,6 @@ import luaj.LuaValue;
 import luaj.LuaTable;
 import luaj.lib.VarArgFunction;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 
 import luaj.Varargs;
@@ -20,11 +18,7 @@ import android.graphics.Paint;
 
 import luaj.LuaError;
 
-import android.graphics.Rect;
 import android.graphics.Color;
-import android.pro.Tools;
-
-import java.io.File;
 
 /**
  * @author Thousand-Dust
@@ -42,8 +36,6 @@ public class CanvasLib extends TwoArgFunction {
         canvas.set("drawCircle", new drawCircle());
         //绘制背景颜色
         canvas.set("drawColor", new drawColor());
-        //获取本地图片文件绘制
-        canvas.set("drawImage", new drawImage());
         //绘制线段
         canvas.set("drawLine", new drawLine());
         //绘制多条线段
@@ -53,7 +45,11 @@ public class CanvasLib extends TwoArgFunction {
         //绘制字符串
         canvas.set("drawText", new drawText());
         //裁剪绘制内容（四边形）
-        canvas.set("clipRect", new ClipRect());
+        canvas.set("clipRect", new clipRect());
+        //旋转画布
+        canvas.set("rotate", new rotate());
+        //移动画布原点
+        canvas.set("translate", new translate());
         //保存画布状态
         canvas.set("save", new Save());
         //恢复上次保存的画布状态
@@ -96,14 +92,6 @@ public class CanvasLib extends TwoArgFunction {
 
     }
 
-    class Save extends VarArgFunction {
-        @Override
-        public Varargs invoke(Varargs args) {
-            LuaCanvas.checkcanvas(args.arg(1)).save();
-            return NONE;
-        }
-    }
-
     class drawArc extends VarArgFunction {
         @Override
         public Varargs invoke(Varargs args) {
@@ -136,21 +124,6 @@ public class CanvasLib extends TwoArgFunction {
         @Override
         public Varargs invoke(Varargs args) {
             LuaCanvas.checkcanvas(args.arg(1)).drawColor(Color.parseColor(args.tojstring(2)));
-            return NONE;
-        }
-    }
-
-    class drawImage extends VarArgFunction {
-        @Override
-        public Varargs invoke(Varargs args) {
-            Bitmap bitmap = null;
-            String path = args.checkjstring(2);
-            if (!new File(path).exists()) {
-                throw new LuaError("文件不存在");
-            }
-            bitmap = BitmapFactory.decodeFile(path);
-            LuaCanvas.checkcanvas(args.arg(1)).drawBitmap(bitmap, args.tofloat(3), args.tofloat(4), LuaPaint.checkpaint(args.arg(5)));
-
             return NONE;
         }
     }
@@ -245,7 +218,7 @@ public class CanvasLib extends TwoArgFunction {
         }
     }
 
-    class ClipRect extends VarArgFunction {
+    class clipRect extends VarArgFunction {
         @Override
         public Varargs invoke(Varargs args) {
             LuaTable table = args.checktable(2);
@@ -254,18 +227,44 @@ public class CanvasLib extends TwoArgFunction {
         }
     }
 
-    class Restore extends VarArgFunction {
+    class rotate extends VarArgFunction {
         @Override
         public Varargs invoke(Varargs args) {
-            LuaCanvas.checkcanvas(args.arg(1)).restore();
+            Canvas canvas = LuaCanvas.checkcanvas(args.arg(1));
+            switch (args.narg()) {
+                case 2:
+                    canvas.rotate(args.tofloat(2));
+                    break;
+                case 4:
+                    canvas.rotate(args.tofloat(2), args.tofloat(3), args.tofloat(4));
+                    break;
+                default:
+                    throw new LuaError("there is no such method: " + args);
+            }
             return NONE;
         }
     }
 
-    class Translate extends VarArgFunction {
+    class translate extends VarArgFunction {
         @Override
         public Varargs invoke(Varargs args) {
             LuaCanvas.checkcanvas(args.arg(1)).translate(args.tofloat(2), args.tofloat(3));
+            return NONE;
+        }
+    }
+
+    class Save extends VarArgFunction {
+        @Override
+        public Varargs invoke(Varargs args) {
+            LuaCanvas.checkcanvas(args.arg(1)).save();
+            return NONE;
+        }
+    }
+
+    class Restore extends VarArgFunction {
+        @Override
+        public Varargs invoke(Varargs args) {
+            LuaCanvas.checkcanvas(args.arg(1)).restore();
             return NONE;
         }
     }
