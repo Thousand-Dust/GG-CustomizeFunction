@@ -1,5 +1,5 @@
 # GG-CustomizeFunction
-对GameGuardian进行自定义的函数,目前只添加绘制函数（在悬浮窗对View进行自定义绘制）和多线程函数
+对GameGuardian进行自定义的函数,目前只添加绘制函数（在悬浮窗对View进行自定义绘制）和多线程函数。如需运行在非gg luaj上，只需要修改Thousand_Dust/Tools.getContext()方法即可。
 ## 制作不易给个☆star吧，谢谢啦！！！
 
 # gg版本
