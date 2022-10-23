@@ -13,6 +13,9 @@ import android.widget.LinearLayout;
 
 import luaj.LuaError;
 
+/**
+ * @author Thousand-Dust
+ */
 public class MyWindowManager {
 
     private static MyWindowManager mWm;

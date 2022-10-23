@@ -6,6 +6,9 @@ import android.os.Build;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 
+/**
+ * @author Thousand-Dust
+ */
 public class MyAccessibilityService extends AccessibilityService {
 
     @Override

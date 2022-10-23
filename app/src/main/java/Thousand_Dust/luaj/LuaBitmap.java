@@ -4,6 +4,9 @@ import android.graphics.Bitmap;
 
 import luaj.LuaValue;
 
+/**
+ * @author Thousand-Dust
+ */
 public class LuaBitmap extends LuaValue {
 
     private Bitmap bitmap;

@@ -201,7 +201,6 @@ public class ViewLib extends TwoArgFunction {
         @Override
         public Varargs invoke(Varargs varargs) {
             DrawView luaView = LuaView.checkview(varargs.arg(1));
-            luaView.close();
             MyWindowManager.getInstance().removeView(luaView);
             return LuaValue.NONE;
         }

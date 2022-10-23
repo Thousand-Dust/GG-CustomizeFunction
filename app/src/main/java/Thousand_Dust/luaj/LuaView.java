@@ -4,6 +4,9 @@ import Thousand_Dust.DrawView;
 
 import luaj.LuaValue;
 
+/**
+ * @author Thousand-Dust
+ */
 public class LuaView extends LuaValue {
 
     private DrawView view;

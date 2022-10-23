@@ -9,7 +9,10 @@ import Thousand_Dust.luaj.LuaCanvas;
 import luaj.LuaFunction;
 
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.View;
+
+import androidx.annotation.NonNull;
 
 /**
  * @author Thousand-Dust
@@ -58,6 +61,12 @@ public class DrawView extends View {
             canvas.restore();
         }
         super.postInvalidate();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        close();
     }
 
     public void start(int fps) {

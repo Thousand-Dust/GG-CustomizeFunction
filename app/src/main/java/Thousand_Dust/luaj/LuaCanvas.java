@@ -3,6 +3,9 @@ import android.graphics.Canvas;
 
 import luaj.LuaValue;
 
+/**
+ * @author Thousand-Dust
+ */
 public class LuaCanvas extends LuaValue {
 
     private Canvas canvas;

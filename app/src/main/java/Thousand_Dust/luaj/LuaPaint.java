@@ -3,6 +3,9 @@ import android.graphics.Paint;
 
 import luaj.LuaValue;
 
+/**
+ * @author Thousand-Dust
+ */
 public class LuaPaint extends LuaValue {
 
     private Paint paint;

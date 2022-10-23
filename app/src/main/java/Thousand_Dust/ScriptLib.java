@@ -16,6 +16,9 @@ import luaj.compiler.LuaC;
 import luaj.lib.TwoArgFunction;
 import luaj.lib.VarArgFunction;
 
+/**
+ * @author Thousand-Dust
+ */
 public class ScriptLib extends TwoArgFunction {
 
     private Globals globals;
