@@ -11,6 +11,9 @@ https://github.com/Thousand-Dust/GG-CustomizeFunction-101
 函数教程 CSDN：https://blog.csdn.net/qq_45925230/article/details/108716660
 其他平台暂无
 
+# 给其他gg添加此函数库教程
+视频录制者文艺：https://b23.tv/LcXSQap
+
 # 成品安装包
 https://wwt.lanzoul.com/b02vn048j
 密码:draw
