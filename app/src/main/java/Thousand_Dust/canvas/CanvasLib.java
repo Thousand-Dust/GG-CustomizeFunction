@@ -95,10 +95,12 @@ public class CanvasLib extends TwoArgFunction {
     class drawArc extends VarArgFunction {
         @Override
         public Varargs invoke(Varargs args) {
+            Canvas canvas = LuaCanvas.checkcanvas(args.arg(1));
+
             LuaTable table = args.checktable(2);
             RectF rectF = new RectF(table.tofloat(1), table.tofloat(2), table.tofloat(3), table.tofloat(4));
-            LuaCanvas.checkcanvas(args.arg(1))
-                    .drawArc(rectF, args.tofloat(3), args.tofloat(4), args.checkboolean(5), LuaPaint.checkpaint(args.arg(6)));
+
+            canvas.drawArc(rectF, args.tofloat(3), args.tofloat(4), args.checkboolean(5), LuaPaint.checkpaint(args.arg(6)));
             return NONE;
         }
     }
@@ -150,7 +152,7 @@ public class CanvasLib extends TwoArgFunction {
         }
     }
 
-    class drawProgress extends VarArgFunction {
+    /*class drawProgress extends VarArgFunction {
         private Paint framePaint;
         private Paint progressPaint;
 
@@ -197,7 +199,7 @@ public class CanvasLib extends TwoArgFunction {
 
             return NONE;
         }
-    }
+    }*/
 
     class drawRect extends VarArgFunction {
         @Override

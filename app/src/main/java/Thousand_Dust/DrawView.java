@@ -23,11 +23,11 @@ public class DrawView extends View {
     private final Refresh refresh = new Refresh();
 
     private Paint paint;
-    private Bitmap bitmap;
     //缓冲图
     private Bitmap bufBitmap;
     //缓冲画布
     public Canvas canvas;
+    public LuaCanvas luaCanvas;
     private LuaFunction drawFun;
     private boolean isRemove = false;
 
@@ -36,10 +36,10 @@ public class DrawView extends View {
         this.globals = globals;
         paint = new Paint();
         int[] wh = Tools.getWH(context);
-        bitmap = Bitmap.createBitmap(wh[0], wh[1], Bitmap.Config.ARGB_8888);
         //防canvas的绘制内容画到缓冲图上
-        bufBitmap = Bitmap.createBitmap(bitmap);
+        bufBitmap = Bitmap.createBitmap(wh[0], wh[1], Bitmap.Config.ARGB_8888);
         canvas = new Canvas(bufBitmap);
+        luaCanvas = LuaCanvas.valueOf(canvas);
     }
 
     public void setDrawFun(LuaFunction drawFun) {
@@ -48,18 +48,23 @@ public class DrawView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.drawBitmap(bufBitmap, 0,0, paint);
+        canvas.drawBitmap(bufBitmap, 0, 0, paint);
+    }
+
+    @Override
+    public void invalidate() {
+        //将bitmap清空
+        bufBitmap.eraseColor(0);
+        if (drawFun != null) {
+            canvas.save();
+            drawFun.call(luaCanvas);
+            canvas.restore();
+        }
+        super.invalidate();
     }
 
     @Override
     public void postInvalidate() {
-        bufBitmap = Bitmap.createBitmap(bitmap);
-        canvas.setBitmap(bufBitmap);
-        if (drawFun != null) {
-            canvas.save();
-            drawFun.call(LuaCanvas.valueOf(canvas));
-            canvas.restore();
-        }
         super.postInvalidate();
     }
 
@@ -101,7 +106,7 @@ public class DrawView extends View {
                 }
             } catch (Exception e) {
                 e.printStackTrace(globals.STDOUT);
-                android.ext.Tools.showToast("error: "+e.getMessage());
+                android.ext.Tools.showToast("error: " + e.getMessage());
             } finally {
                 if (isStart) {
                     isStart = false;
