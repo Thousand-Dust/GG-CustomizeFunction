@@ -19,6 +19,9 @@ import luaj.LuaError;
 public class MyWindowManager {
 
     private static MyWindowManager mWm;
+    private static float alpha = 1f;
+
+    public static final float MAXIMUM_OBSCURING_OPACITY = 0.8f;
 
     public static void newInstance(Context context) {
         if (mWm == null) {
@@ -32,7 +35,7 @@ public class MyWindowManager {
 
     public static MyWindowManager getInstance() {
         if (mWm == null) {
-            throw new LuaError("无障碍功能可能未开启");
+            throw new LuaError("悬浮窗未初始化，可能是无障碍功能可能未开启");
         }
         return mWm;
     }
@@ -42,6 +45,19 @@ public class MyWindowManager {
         mWm.wm.removeView(mWm.viewGroup);
         mWm = null;
         System.gc();
+    }
+
+    public static void setAlpha(float alpha) {
+        MyWindowManager.alpha = alpha;
+        if (!isInstanceEmpty()) {
+            //悬浮窗已实例化，更新悬浮窗透明度
+            mWm.lp.alpha = alpha;
+            mWm.wm.updateViewLayout(mWm.viewGroup, mWm.lp);
+        }
+    }
+
+    public static float getAlpha() {
+        return alpha;
     }
 
     private Handler handler = new Handler(Looper.getMainLooper());
@@ -63,7 +79,7 @@ public class MyWindowManager {
         int type;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && alpha > MAXIMUM_OBSCURING_OPACITY) {
             type = WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY;
         } else {
             type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
@@ -74,9 +90,13 @@ public class MyWindowManager {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 type,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FIRST_SYSTEM_WINDOW,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE |
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
+                        WindowManager.LayoutParams.FIRST_SYSTEM_WINDOW,
                 PixelFormat.RGBA_8888
         );
+        lp.alpha = alpha;
         lp.gravity = Gravity.TOP | Gravity.LEFT;
 
         wm.addView(viewGroup, lp);

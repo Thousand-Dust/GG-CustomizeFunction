@@ -4,6 +4,7 @@ import Thousand_Dust.canvas.BitmapLib;
 import Thousand_Dust.canvas.CanvasLib;
 import Thousand_Dust.canvas.PaintLib;
 import android.content.Context;
+import android.os.Looper;
 
 import Thousand_Dust.canvas.ViewLib;
 

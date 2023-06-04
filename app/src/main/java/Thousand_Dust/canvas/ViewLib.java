@@ -1,5 +1,7 @@
 package Thousand_Dust.canvas;
 
+import static Thousand_Dust.MyWindowManager.MAXIMUM_OBSCURING_OPACITY;
+
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -11,6 +13,7 @@ import Thousand_Dust.DevInfo;
 import Thousand_Dust.DrawView;
 import Thousand_Dust.MyWindowManager;
 import Thousand_Dust.Tools;
+
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
@@ -33,16 +36,12 @@ public class ViewLib extends TwoArgFunction {
 
     private Globals globals;
 
-    public ViewLib() {
-        //android版本小于12直接显示悬浮窗
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-            MyWindowManager.newInstance(Tools.getContext());
-        }
-    }
-
     @Override
     public LuaValue call(LuaValue arg1, LuaValue env) {
         globals = env.checkglobals();
+        //强制关闭绘图无障碍
+        env.set("disDrawAcc", new disDrawAcc());
+
         env.set("newView", new newView());
         env.set("removeAllView", new removeAllView());
 
@@ -59,31 +58,39 @@ public class ViewLib extends TwoArgFunction {
         }
         if (LuaView.s_metatable == null) {
             LuaTable mt = LuaValue.tableOf(
-                    new LuaValue[] { INDEX, view});
+                    new LuaValue[]{INDEX, view});
             LuaView.s_metatable = mt;
         }
 
         return env;
     }
 
-    class newView extends VarArgFunction {
-        private boolean isShowAlert = false;
-        private boolean isPrint = false;
+    class disDrawAcc extends VarArgFunction {
         @Override
         public Varargs invoke(Varargs args) {
-            //android版本12及以上需要开启无障碍
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                if (MyWindowManager.isInstanceEmpty()) {
+            MyWindowManager.setAlpha(MAXIMUM_OBSCURING_OPACITY);
+            return LuaValue.NONE;
+        }
+    }
+
+    class newView extends VarArgFunction {
+        private boolean isPrint = false;
+
+        @Override
+        public Varargs invoke(Varargs args) {
+            if (MyWindowManager.isInstanceEmpty()) {
+                //android版本12及以上需要开启无障碍
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && MyWindowManager.getAlpha() > MAXIMUM_OBSCURING_OPACITY) {
                     showPermissionAlert();
+                } else {
+                    showOrdinaryAlert();
                 }
-            } else if (!isShowAlert) {
-                showOrdinaryAlert();
-                isShowAlert = true;
             }
             DrawView drawView = new DrawView(Tools.getContext(), globals);
             MyWindowManager.getInstance().addView(drawView);
             return LuaView.valueOf(drawView);
         }
+
         public void showOrdinaryAlert() {
             final boolean[] result = {false, false};
             Runnable run = () -> {
@@ -108,6 +115,7 @@ public class ViewLib extends TwoArgFunction {
                 ab.setView(devText);
                 ab.setCancelable(false);
                 ab.setPositiveButton("同意", (p1, p2) -> {
+                    MyWindowManager.newInstance(Tools.getContext());
                     result[1] = true;
                 });
                 ab.setNegativeButton("拒绝", (p1, p2) -> {
@@ -132,6 +140,7 @@ public class ViewLib extends TwoArgFunction {
                 throw new LuaError("用户拒绝在屏幕上绘制");
             }
         }
+
         public void showPermissionAlert() {
             final boolean[] isClock = {false};
             Runnable run = () -> {

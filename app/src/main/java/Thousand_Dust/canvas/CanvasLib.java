@@ -70,7 +70,6 @@ public class CanvasLib extends TwoArgFunction {
     class MyThread extends VarArgFunction {
         @Override
         public Varargs invoke(final Varargs args) {
-
             new Thread() {
                 @Override
                 public void run() {
