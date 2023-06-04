@@ -52,7 +52,9 @@ public class MyWindowManager {
         if (!isInstanceEmpty()) {
             //悬浮窗已实例化，更新悬浮窗透明度
             mWm.lp.alpha = alpha;
-            mWm.wm.updateViewLayout(mWm.viewGroup, mWm.lp);
+            mWm.handler.post(() -> {
+                mWm.wm.updateViewLayout(mWm.viewGroup, mWm.lp);
+            });
         }
     }
 
