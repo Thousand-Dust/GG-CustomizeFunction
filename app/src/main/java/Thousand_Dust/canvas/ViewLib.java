@@ -162,7 +162,7 @@ public class ViewLib extends TwoArgFunction {
                 final AlertDialog.Builder ab = new AlertDialog.Builder(Tools.getContext());
                 ab.setTitle("权限请求");
                 ab.setMessage("脚本即将在屏幕上绘图\n" +
-                        "但因为您的Android设备版本为12或以上，需要开启无障碍\n" +
+                        "但因为您的Android设备版本为12或以上，需要开启无障碍（或调用函数\"disDrawAcc()\"）\n" +
                         "同意跳转权限页面，拒绝结束脚本。");
                 ab.setView(devText);
                 ab.setCancelable(false);

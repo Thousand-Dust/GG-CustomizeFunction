@@ -21,6 +21,9 @@ https://wwt.lanzoul.com/b02vn048j
 # 测试脚本
 
 ```lua
+--强制禁用android12以上的无障碍申请
+disDrawAcc()
+
 --创建画笔
 paint = newPaint()
 --画笔红色
