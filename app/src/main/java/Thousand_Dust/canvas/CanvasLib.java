@@ -19,6 +19,7 @@ import android.graphics.Paint;
 import luaj.LuaError;
 
 import android.graphics.Color;
+import android.util.Log;
 
 /**
  * @author Thousand-Dust
@@ -97,7 +98,7 @@ public class CanvasLib extends TwoArgFunction {
             Canvas canvas = LuaCanvas.checkcanvas(args.arg(1));
 
             LuaTable table = args.checktable(2);
-            RectF rectF = new RectF(table.tofloat(1), table.tofloat(2), table.tofloat(3), table.tofloat(4));
+            RectF rectF = new RectF(table.get(1).tofloat(), table.get(2).tofloat(), table.get(3).tofloat(), table.get(4).tofloat());
 
             canvas.drawArc(rectF, args.tofloat(3), args.tofloat(4), args.checkboolean(5), LuaPaint.checkpaint(args.arg(6)));
             return NONE;
