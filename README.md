@@ -17,7 +17,7 @@ https://github.com/Thousand-Dust/GG-CustomizeFunction-101
 # 成品安装包
 https://wwt.lanzoul.com/b02vn048j
 密码:draw
-## [打包后的dex](https://github.com/Thousand-Dust/GG-CustomizeFunction/releases)
+## [releases](https://github.com/Thousand-Dust/GG-CustomizeFunction/releases)
 
 
 # 测试脚本
